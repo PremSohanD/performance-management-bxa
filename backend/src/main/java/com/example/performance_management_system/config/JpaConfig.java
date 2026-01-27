@@ -1,4 +1,5 @@
-package com.company.pms.config;
+package com.example.performance_management_system.config;
+
 
 public class JpaConfig {
 }
