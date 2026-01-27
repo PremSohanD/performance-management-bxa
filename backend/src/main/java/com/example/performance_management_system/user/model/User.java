@@ -1,8 +1,12 @@
 package com.example.performance_management_system.user.model;
 
+import com.example.performance_management_system.department.model.Department;
+import com.example.performance_management_system.role.model.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
