@@ -1,9 +1,11 @@
 package com.example.performance_management_system.review.service;
 
 import com.example.performance_management_system.common.exception.BusinessException;
+import com.example.performance_management_system.config.security.SecurityUtil;
 import com.example.performance_management_system.review.model.Review;
 import com.example.performance_management_system.review.repository.ReviewRepository;
 import com.example.performance_management_system.reviewcycle.repository.ReviewCycleRepository;
+import com.example.performance_management_system.user.service.HierarchyService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,11 +15,13 @@ public class ReviewService {
 
     private final ReviewRepository repository;
     private final ReviewCycleRepository reviewCycleRepository;
-
+    private final HierarchyService hierarchyService;
     public ReviewService(ReviewRepository repository,
-                         ReviewCycleRepository reviewCycleRepository) {
+                         ReviewCycleRepository reviewCycleRepository,
+                         HierarchyService hierarchyService) {
         this.repository = repository;
         this.reviewCycleRepository = reviewCycleRepository;
+        this.hierarchyService = hierarchyService;
     }
 
     @Transactional
@@ -33,23 +37,46 @@ public class ReviewService {
 
         return repository.save(review);
     }
+
     @PreAuthorize("hasRole('EMPLOYEE')")
     @Transactional
     public Review submitSelfReview(Long reviewId, String comments) {
+
         Review review = get(reviewId);
+
+        if (!review.getEmployeeId().equals(SecurityUtil.userId())) {
+            throw new BusinessException("You can submit self-review only for yourself");
+        }
+
         review.setSelfReviewComments(comments);
         review.submitSelfReview();
+
         return repository.save(review);
     }
+
 
     @PreAuthorize("hasRole('MANAGER')")
     @Transactional
     public Review submitManagerReview(Long reviewId, String comments) {
+
         Review review = get(reviewId);
+
+        Long managerId = SecurityUtil.userId();
+        String role = SecurityUtil.role();
+
+        if (!role.equals("HR") && !role.equals("ADMIN")) {
+            hierarchyService.validateManagerAccess(
+                    managerId,
+                    review.getEmployeeId()
+            );
+        }
+
         review.setManagerReviewComments(comments);
         review.submitManagerReview();
+
         return repository.save(review);
     }
+
 
     private Review get(Long id) {
         return repository.findById(id)

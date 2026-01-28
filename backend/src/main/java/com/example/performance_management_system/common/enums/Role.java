@@ -1,4 +1,4 @@
-package com.example.performance_management_system.common.exception.enums;
+package com.example.performance_management_system.common.enums;
 
 public enum Role {
     EMPLOYEE,
