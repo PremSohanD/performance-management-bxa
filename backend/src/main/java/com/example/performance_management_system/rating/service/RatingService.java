@@ -1,11 +1,13 @@
 package com.example.performance_management_system.rating.service;
 
 import com.example.performance_management_system.common.exception.BusinessException;
+import com.example.performance_management_system.config.security.SecurityUtil;
 import com.example.performance_management_system.performancecycle.service.PerformanceCycleService;
 import com.example.performance_management_system.rating.dto.CalibrateRatingRequest;
 import com.example.performance_management_system.rating.dto.CreateRatingRequest;
 import com.example.performance_management_system.rating.model.Rating;
 import com.example.performance_management_system.rating.repository.RatingRepository;
+import com.example.performance_management_system.user.service.HierarchyService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,11 +17,14 @@ public class RatingService {
 
     private final RatingRepository repository;
     private final PerformanceCycleService cycleService;
+    private final HierarchyService hierarchyService;
 
     public RatingService(RatingRepository repository,
-                         PerformanceCycleService cycleService) {
+                         PerformanceCycleService cycleService,
+                         HierarchyService hierarchyService) {
         this.repository = repository;
         this.cycleService = cycleService;
+        this.hierarchyService = hierarchyService;
     }
 
     @Transactional
@@ -43,10 +48,23 @@ public class RatingService {
     @PreAuthorize("hasRole('MANAGER')")
     @Transactional
     public Rating submitByManager(Long ratingId) {
+
         Rating rating = get(ratingId);
+
+        Long managerId = SecurityUtil.userId();
+        String role = SecurityUtil.role();
+
+        if (!role.equals("HR") && !role.equals("ADMIN")) {
+            hierarchyService.validateManagerAccess(
+                    managerId,
+                    rating.getEmployeeId()
+            );
+        }
+
         rating.submitByManager();
         return repository.save(rating);
     }
+
 
     @PreAuthorize("hasRole('HR')")
     @Transactional
