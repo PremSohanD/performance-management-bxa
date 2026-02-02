@@ -1,0 +1,19 @@
+import httpClient from "../../services/httpClient";
+
+export const getMyGoalsApi = (page = 0, size = 10) =>
+  httpClient.get(`/api/goals?page=${page}&size=${size}`);
+
+export const createGoalApi = (payload) =>
+  httpClient.post("/api/goals", payload);
+
+export const submitGoalApi = (id) =>
+  httpClient.post(`/api/goals/${id}/submit`);
+
+export const approveGoalApi = (id) =>
+  httpClient.post(`/api/goals/${id}/approve`);
+
+export const getTeamGoalsApi = (page = 0, size = 10) =>
+  httpClient.get(`/api/goals/team?page=${page}&size=${size}`);
+
+export const rejectGoalApi = (id, reason) =>
+  httpClient.post(`/api/goals/${id}/reject`, { reason });

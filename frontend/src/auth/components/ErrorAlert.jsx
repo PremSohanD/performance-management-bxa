@@ -1,0 +1,6 @@
+// src/auth/components/ErrorAlert.jsx
+const ErrorAlert = ({ message }) => {
+  return <div className="error-alert">{message}</div>;
+};
+
+export default ErrorAlert;
