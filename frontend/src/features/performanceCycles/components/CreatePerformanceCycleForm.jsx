@@ -8,55 +8,83 @@ const CreatePerformanceCycleForm = () => {
     startDate: "",
     endDate: ""
   });
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     await createCycle(form);
+    setLoading(false);
     setForm({ name: "", cycleType: "", startDate: "", endDate: "" });
   };
 
+  const labelClass = "block text-xs font-medium text-slate-700 mb-1";
+  const inputClass = "w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition shadow-sm";
+
   return (
-    <form onSubmit={handleSubmit}>
-      <h3>Create Performance Cycle</h3>
+    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
 
-      <input
-        placeholder="Cycle Name"
-        value={form.name}
-        onChange={(e) => setForm({ ...form, name: e.target.value })}
-        required
-      />
+      {/* Name */}
+      <div className="md:col-span-1">
+        <label className={labelClass}>Cycle Name</label>
+        <input
+          placeholder="e.g. FY2026 Q1"
+          value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          className={inputClass}
+          required
+        />
+      </div>
 
-      <select
-        value={form.cycleType}
-        onChange={(e) =>
-          setForm({ ...form, cycleType: e.target.value })
-        }
-        required
-      >
-        <option value="">Select Type</option>
-        <option value="ANNUAL">ANNUAL</option>
-        <option value="QUARTERLY">QUARTERLY</option>
-      </select>
+      {/* Type */}
+      <div className="md:col-span-1">
+        <label className={labelClass}>Cycle Type</label>
+        <select
+          value={form.cycleType}
+          onChange={(e) => setForm({ ...form, cycleType: e.target.value })}
+          className={inputClass}
+          required
+        >
+          <option value="">Select Type</option>
+          <option value="ANNUAL">Annual Review</option>
+          <option value="QUARTERLY">Quarterly Review</option>
+          <option value="PROBATION">Probation</option>
+        </select>
+      </div>
 
-      <input
-        type="date"
-        value={form.startDate}
-        onChange={(e) =>
-          setForm({ ...form, startDate: e.target.value })
-        }
-        required
-      />
+      {/* Dates Row */}
+      <div className="md:col-span-1">
+        <label className={labelClass}>Start Date</label>
+        <input
+          type="date"
+          value={form.startDate}
+          onChange={(e) => setForm({ ...form, startDate: e.target.value })}
+          className={inputClass}
+          required
+        />
+      </div>
 
-      <input
-        type="date"
-        value={form.endDate}
-        onChange={(e) =>
-          setForm({ ...form, endDate: e.target.value })
-        }
-        required
-      />
+      <div className="md:col-span-1">
+        <label className={labelClass}>End Date</label>
+        <input
+          type="date"
+          value={form.endDate}
+          onChange={(e) => setForm({ ...form, endDate: e.target.value })}
+          className={inputClass}
+          required
+        />
+      </div>
 
-      <button type="submit">Create</button>
+      {/* Submit Button */}
+      <div className="md:col-span-4 flex justify-end mt-2">
+         <button
+           type="submit"
+           disabled={loading}
+           className="px-6 py-2.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition shadow-sm disabled:opacity-70 flex items-center gap-2"
+         >
+           {loading ? "Creating..." : "Create Cycle"}
+         </button>
+      </div>
     </form>
   );
 };

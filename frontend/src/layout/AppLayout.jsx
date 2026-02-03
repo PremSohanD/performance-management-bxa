@@ -1,18 +1,24 @@
-// src/layout/AppLayout.jsx
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 
 const AppLayout = () => {
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
+    <div className="flex h-screen w-full bg-gray-50 overflow-hidden font-sans">
+      {/* Sidebar - Fixed width */}
       <Sidebar />
 
-      <div style={{ flex: 1 }}>
+      {/* Main Content Area */}
+      <div className="flex flex-col flex-1 h-screen overflow-hidden">
+        {/* Topbar - Fixed height */}
         <Topbar />
-        <div style={{ padding: "20px" }}>
-          <Outlet />
-        </div>
+
+        {/* Scrollable Content Canvas */}
+        <main className="flex-1 overflow-x-hidden overflow-y-auto p-6 md:p-8">
+          <div className="max-w-7xl mx-auto">
+            <Outlet />
+          </div>
+        </main>
       </div>
     </div>
   );
