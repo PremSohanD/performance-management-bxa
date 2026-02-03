@@ -43,9 +43,10 @@ public class AuditEventConsumer {
         }
 
         try {
-            log.setPayload(objectMapper.writeValueAsString(event.payload));
+            log.setPayload(event.payload);
+
         } catch (Exception e) {
-            log.setPayload("{}");
+//            log.setPayload("{}");
         }
 
         log.setCreatedAt(event.timestamp);

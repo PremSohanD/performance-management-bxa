@@ -3,8 +3,11 @@ package com.example.performance_management_system.audit.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
+import java.util.Map;
 
 @Entity
 @Getter
@@ -31,9 +34,9 @@ public class AuditLog {
     private Long actorId;
     private String actorRole;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private String payload;
+    private Map<String, Object> payload;
 
-    @Column(nullable = false)
     private Instant createdAt;
 }
