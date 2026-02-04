@@ -2,9 +2,11 @@ import { NavLink } from "react-router-dom";
 import { authStore } from "../auth/auth.store";
 
 // Helper component for consistent links
-const NavItem = ({ to, children, icon }) => (
+// Updated to accept 'end' prop for exact path matching
+const NavItem = ({ to, children, icon, end = false }) => (
   <NavLink
     to={to}
+    end={end} // <--- Pass the end prop to NavLink
     className={({ isActive }) =>
       `flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 group ${
         isActive
@@ -58,7 +60,8 @@ const Sidebar = () => {
         {(user?.role === "EMPLOYEE" || user?.role === "MANAGER") && (
            <>
              <p className="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider mt-6 mb-2">Performance</p>
-             <NavItem to="/goals" icon={Icons.Goal}>My Goals</NavItem>
+             {/* 🔥 ADDED 'end' PROP HERE to ensure My Goals is only active on exact match */}
+             <NavItem to="/goals" icon={Icons.Goal} end={true}>My Goals</NavItem>
            </>
         )}
 
