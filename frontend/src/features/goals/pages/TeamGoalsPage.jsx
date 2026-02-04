@@ -12,8 +12,17 @@ const TeamGoalsPage = () => {
   }, []);
 
   return (
-    <div>
-      <h2>Team Goals</h2>
+    <div className="space-y-6">
+
+      {/* --- Page Header --- */}
+      <div>
+        <h1 className="text-2xl font-bold text-slate-900">Team Goals</h1>
+        <p className="text-sm text-slate-500 mt-1">
+          Overview of objectives assigned to your direct reports.
+        </p>
+      </div>
+
+      {/* --- Goals List --- */}
       <GoalsTable goals={state.goals} />
     </div>
   );
