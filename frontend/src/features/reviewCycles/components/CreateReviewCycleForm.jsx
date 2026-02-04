@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createReviewCycleApi } from "../reviewCycles.api";
 
-const CreateReviewCycleForm = () => {
+const CreateReviewCycleForm = ({ onSuccess }) => {
   const [form, setForm] = useState({
     name: "",
     selfReviewEnabled: true,
@@ -9,59 +9,97 @@ const CreateReviewCycleForm = () => {
     startDate: "",
     endDate: ""
   });
+  const [loading, setLoading] = useState(false);
 
-  const submit = async () => {
+  const submit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
     await createReviewCycleApi(form);
-    alert("Review cycle created");
+    setLoading(false);
+    setForm({
+      name: "",
+      selfReviewEnabled: true,
+      managerReviewEnabled: true,
+      startDate: "",
+      endDate: ""
+    });
+    if (onSuccess) onSuccess();
   };
 
+  const labelClass = "block text-xs font-medium text-slate-700 mb-1";
+  const inputClass = "w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition shadow-sm";
+
   return (
-    <div className="space-y-3 border p-4 rounded">
-      <input
-        placeholder="Cycle Name"
-        value={form.name}
-        onChange={(e) => setForm({ ...form, name: e.target.value })}
-        className="border p-2 w-full"
-      />
+    <form onSubmit={submit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-      <label className="flex gap-2">
+      {/* Name Input - Full Width */}
+      <div className="md:col-span-2">
+        <label className={labelClass}>Cycle Name</label>
         <input
-          type="checkbox"
-          checked={form.selfReviewEnabled}
-          onChange={(e) =>
-            setForm({ ...form, selfReviewEnabled: e.target.checked })
-          }
+          placeholder="e.g. 2026 Mid-Year Review"
+          value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          className={inputClass}
+          required
         />
-        Self Review Enabled
-      </label>
+      </div>
 
-      <label className="flex gap-2">
+      {/* Date Inputs */}
+      <div>
+        <label className={labelClass}>Start Date</label>
         <input
-          type="checkbox"
-          checked={form.managerReviewEnabled}
-          onChange={(e) =>
-            setForm({ ...form, managerReviewEnabled: e.target.checked })
-          }
+          type="date"
+          value={form.startDate}
+          onChange={(e) => setForm({ ...form, startDate: e.target.value })}
+          className={inputClass}
+          required
         />
-        Manager Review Enabled
-      </label>
+      </div>
+      <div>
+        <label className={labelClass}>End Date</label>
+        <input
+          type="date"
+          value={form.endDate}
+          onChange={(e) => setForm({ ...form, endDate: e.target.value })}
+          className={inputClass}
+          required
+        />
+      </div>
 
-      <input
-        type="date"
-        onChange={(e) => setForm({ ...form, startDate: e.target.value })}
-      />
-      <input
-        type="date"
-        onChange={(e) => setForm({ ...form, endDate: e.target.value })}
-      />
+      {/* Toggles / Checkboxes */}
+      <div className="md:col-span-2 flex gap-4 pt-2">
+        <label className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition w-full ${form.selfReviewEnabled ? 'bg-blue-50 border-blue-200' : 'bg-white border-slate-200 hover:bg-slate-50'}`}>
+          <input
+            type="checkbox"
+            checked={form.selfReviewEnabled}
+            onChange={(e) => setForm({ ...form, selfReviewEnabled: e.target.checked })}
+            className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+          />
+          <span className={`text-sm font-medium ${form.selfReviewEnabled ? 'text-blue-700' : 'text-slate-700'}`}>Enable Self Review</span>
+        </label>
 
-      <button
-        onClick={submit}
-        className="px-4 py-2 bg-blue-600 text-white rounded"
-      >
-        Create Review Cycle
-      </button>
-    </div>
+        <label className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition w-full ${form.managerReviewEnabled ? 'bg-blue-50 border-blue-200' : 'bg-white border-slate-200 hover:bg-slate-50'}`}>
+          <input
+            type="checkbox"
+            checked={form.managerReviewEnabled}
+            onChange={(e) => setForm({ ...form, managerReviewEnabled: e.target.checked })}
+            className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+          />
+          <span className={`text-sm font-medium ${form.managerReviewEnabled ? 'text-blue-700' : 'text-slate-700'}`}>Enable Manager Review</span>
+        </label>
+      </div>
+
+      {/* Submit Button */}
+      <div className="md:col-span-2 flex justify-end mt-2">
+        <button
+          type="submit"
+          disabled={loading}
+          className="px-6 py-2.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition shadow-sm disabled:opacity-70 flex items-center gap-2"
+        >
+          {loading ? "Creating..." : "Create Cycle"}
+        </button>
+      </div>
+    </form>
   );
 };
 
