@@ -28,41 +28,36 @@ const AppRoutes = () => {
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
 
-        {/* Protected routes */}
+        {/* Protected routes (Wrapped in AuthGuard) */}
        <Route element={<AuthGuard />}>
+
+         {/* Layout Route (Provides Sidebar & Topbar) */}
          <Route element={<AppLayout />}>
+
+           {/* Common Routes */}
            <Route path="/dashboard" element={<EmployeeDashboard />} />
            <Route path="/users" element={<UserList />} />
            <Route path="/goals" element={<MyGoalsPage />} />
            <Route path="/goals/team" element={<TeamGoalsPage />} />
-           <Route path="/goals/team" element={<TeamGoalsPage />} />
 
-
-
-           {/* HR + ADMIN ONLY */}
+           {/* HR + ADMIN Protected Routes */}
            <Route element={<RoleGuard allowedRoles={["HR", "ADMIN"]} />}>
              <Route path="/users/create" element={<CreateUser />} />
              <Route path="/users/:id/edit" element={<EditUser />} />
              <Route path="/departments" element={<DepartmentList />} />
              <Route path="/performance-cycles" element={<PerformanceCycleList />}/>
+
+             {/* ✅ FIX: Moved Review Cycles HERE so it gets the Layout & Role Protection */}
+             <Route path="/review-cycles" element={<ReviewCyclePage />} />
            </Route>
+
+           {/* Other Role-Specific Pages (Moved inside AppLayout to get Sidebar too) */}
+           <Route path="/ratings/manager" element={<RequireRole roles={["MANAGER"]}><ManagerRatingsPage /></RequireRole>} />
+           <Route path="/ratings/hr" element={<RequireRole roles={["HR"]}><HrCalibrationPage /></RequireRole>} />
+           <Route path="/ratings/final" element={<RequireRole roles={["LEADERSHIP"]}><FinalRatingsPage /></RequireRole>} />
+
          </Route>
        </Route>
-
-       <Route
-         path="/review-cycles"
-         element={
-           <RequireRole roles={["HR", "ADMIN"]}>
-             <ReviewCyclePage />
-           </RequireRole>
-         }
-       />
-
-       <Route path="/ratings/manager" element={<RequireRole roles={["MANAGER"]}><ManagerRatingsPage /></RequireRole>} />
-       <Route path="/ratings/hr" element={<RequireRole roles={["HR"]}><HrCalibrationPage /></RequireRole>} />
-       <Route path="/ratings/final" element={<RequireRole roles={["LEADERSHIP"]}><FinalRatingsPage /></RequireRole>} />
-
-
 
       </Routes>
     </BrowserRouter>
