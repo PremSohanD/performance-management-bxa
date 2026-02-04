@@ -11,6 +11,7 @@ import {
 
 const initialState = {
   goals: [],
+  teamGoals: [],
   page: 0,
   totalPages: 0,
   loading: false,
@@ -85,7 +86,7 @@ export async function fetchTeamGoals(page = 0) {
     setState({ loading: true });
     const res = await getTeamGoalsApi(page);
     setState({
-      goals: res.data.content || [],
+      teamGoals: res.data.content || [],
       page: res.data.number,
       totalPages: res.data.totalPages,
       loading: false
